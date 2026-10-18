@@ -220,6 +220,7 @@ function render(): void {
   main.innerHTML = renderStepper() + screens[state.step]();
   bind[state.step]();
   syncChecked(main);
+  $('#homeBtn').hidden = state.step === 'info';
   document.title = `${STEP_TITLES[state.step]} — тестовая версия опросника`;
   window.scrollTo({ top: 0, behavior: 'auto' });
   const h1 = main.querySelector<HTMLElement>('h1');
@@ -743,6 +744,8 @@ const bind: Record<Step, () => void> = {
 /* ---------- Запуск ---------- */
 
 export function start(): void {
+  // ответы сохраняются: с главной можно вернуться к опросу кнопкой «Начать»
+  $('#homeBtn').addEventListener('click', () => go('info'));
   const fromHash = location.hash.slice(1) as Step;
   const initial = STEPS.includes(fromHash) ? fromHash : state.step;
   const target = allowed(initial) ? initial : furthestAllowed();

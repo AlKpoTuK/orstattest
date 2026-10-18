@@ -11,8 +11,6 @@
   --accent-strong: #164a60;
   --accent-soft: #e3eef2;
   --on-accent: #ffffff;
-  --header-bg: #1f5f7a;
-  --header-text: #ffffff;
   --focus: #e08a00;
   --warn-bg: #fff4d6;
   --warn-text: #5c4300;
@@ -58,8 +56,6 @@
     --accent-strong: #8cc5dc;
     --accent-soft: #1f3540;
     --on-accent: #0d1a20;
-    --header-bg: #1b3642;
-    --header-text: #e8e6e1;
     --focus: #ffb240;
     --warn-bg: #3a3017;
     --warn-text: #f3dc9d;
@@ -91,7 +87,6 @@
 :root[data-theme="dark"] {
   --bg: #16191d; --surface: #1f2328; --surface-2: #272c32; --text: #e8e6e1; --muted: #a3abb3;
   --line: #363c44; --accent: #6fb3cf; --accent-strong: #8cc5dc; --accent-soft: #1f3540; --on-accent: #0d1a20;
-  --header-bg: #1b3642; --header-text: #e8e6e1;
   --focus: #ffb240; --warn-bg: #3a3017; --warn-text: #f3dc9d;
   --none: #6fcf9d; --none-bg: #1b3328; --mild: #e7c15a; --mild-bg: #3a3118;
   --moderate: #f29b62; --moderate-bg: #402818; --severe: #f08a82; --severe-bg: #42201e;
@@ -143,12 +138,49 @@ p { margin: 10px 0; }
 
 /* ---------- Шапка ---------- */
 
+/* Как у анкет: светлая панель, цветная полоса сверху, значок планшета, метка версии */
 .app-header {
-  background: var(--header-bg);
-  color: var(--header-text);
-  padding: calc(10px + env(safe-area-inset-top)) 0 10px;
+  position: -webkit-sticky; position: sticky; top: 0; z-index: 20;
+  background: var(--surface);
+  color: var(--text);
+  border-top: 4px solid var(--accent);
+  border-bottom: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  padding: env(safe-area-inset-top) 0 0;
 }
-.brand { margin: 0; font-weight: 700; font-size: 1.1rem; }
+.header-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; }
+.brand { margin: 0; display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-icon {
+  flex: 0 0 36px; width: 36px; height: 36px; border-radius: 10px;
+  display: grid; place-items: center;
+  background: var(--accent-soft); color: var(--accent);
+}
+.brand-icon svg, .home-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.brand-name { font-weight: 700; font-size: 1.05rem; }
+.version-badge {
+  display: inline-block; white-space: nowrap;
+  padding: 3px 10px; border-radius: 999px;
+  background: var(--warn-bg); color: var(--warn-text);
+  border: 1px solid var(--line);
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.01em;
+}
+.home-btn {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
+  min-height: 40px; padding: 6px 14px;
+  border: 1.5px solid var(--accent); border-radius: 999px;
+  background: transparent; color: var(--accent);
+  font: inherit; font-size: 0.92rem; font-weight: 600; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.home-btn:active { background: var(--accent-soft); }
+.home-btn[hidden] { display: none; }
+@media (max-width: 419px) {
+  .home-btn { padding: 0; width: 44px; min-height: 44px; justify-content: center; }
+  .home-btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+@media (max-width: 339px) {
+  .brand-name { display: none; }
+}
 
 
 main { padding-top: 12px; padding-bottom: 32px; }
@@ -292,7 +324,7 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
   padding: 14px;
   margin: 0 0 14px;
   min-width: 0;
-  scroll-margin: 90px;
+  scroll-margin: 110px;
   transition: border-color 0.15s;
 }
 .question.answered { border-color: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
@@ -466,6 +498,7 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
 
 @media (hover: hover) and (pointer: fine) {
   .btn-primary:hover { background: var(--accent-strong); }
+  .home-btn:hover { background: var(--accent-soft); }
   .btn-secondary:hover, .btn-ghost:hover { background: var(--accent-soft); }
   .role-tile:hover { border-color: var(--accent); }
   .option:hover { border-color: var(--accent); }
@@ -497,7 +530,8 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
   :root { --bg: #fff; --surface: #fff; --shadow: none; }
   body { font-size: 12pt; background: #fff; color: #000; }
   .stepper, .no-print, .sticky-actions, .actions, .clinical, #shareMsg { display: none !important; }
-  .app-header { background: none; color: #000; padding: 0; border-bottom: 2px solid #000; }
+  .app-header { position: static; background: none; color: #000; padding: 0; border-top: 0; border-bottom: 2px solid #000; box-shadow: none; }
+  .home-btn { display: none !important; }
   .card { box-shadow: none; break-inside: avoid; }
   .result-card { break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .levels-table td.hit, .levels-table .cur-col { -webkit-print-color-adjust: exact; print-color-adjust: exact; }

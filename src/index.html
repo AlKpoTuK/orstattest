@@ -6,15 +6,25 @@
 <meta name="color-scheme" content="light dark">
 <!-- Тестовая версия: не показывать в поисковиках -->
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#1f5f7a" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1b3642" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1f2328" media="(prefers-color-scheme: dark)">
 <title>Тестовая версия опросника</title>
 <style>/*__CSS__*/</style>
 </head>
 <body>
 <header class="app-header">
-  <div class="wrap">
-    <p class="brand">Тестовая версия опросника</p>
+  <div class="wrap header-row">
+    <p class="brand">
+      <span class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5"/><path d="M9 12.5l2 2 4-4.5"/></svg>
+      </span>
+      <span class="brand-name">Опросник</span>
+      <span class="version-badge">Тестовая версия</span>
+    </p>
+    <button type="button" class="home-btn" id="homeBtn" title="На главную" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h4v-6h4v6h4V10"/></svg>
+      <span>На главную</span>
+    </button>
   </div>
 </header>
 <main id="app" class="wrap"></main>

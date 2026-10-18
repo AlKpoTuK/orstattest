@@ -1,5 +1,5 @@
 import { AGE_GROUPS, LEVELS, LEVEL_RANGES, type AgeGroupId, type ItemId, type LevelId } from './content';
-import { DISCLAIMER, HOME, ROLE_TEXT } from './info';
+import { HOME, ROLE_TEXT } from './info';
 import { SWALLOW_SVG, initSwallowAnimation } from './swallow-anim';
 import {
   answeredCount,
@@ -219,6 +219,7 @@ function render(): void {
   };
   main.innerHTML = renderStepper() + screens[state.step]();
   bind[state.step]();
+  syncChecked(main);
   document.title = `${STEP_TITLES[state.step]} — тестовая версия опросника`;
   window.scrollTo({ top: 0, behavior: 'auto' });
   const h1 = main.querySelector<HTMLElement>('h1');
@@ -227,6 +228,13 @@ function render(): void {
 
 function backButton(to: Step): string {
   return `<button type="button" class="btn btn-ghost" data-go="${to}">${ICONS.back}<span>Назад</span></button>`;
+}
+
+/** Класс .is-checked на выбранном варианте — работает во всех браузерах, в отличие от :has(). */
+function syncChecked(root: ParentNode): void {
+  root.querySelectorAll<HTMLInputElement>('.option input[type="radio"]').forEach((input) =>
+    input.closest('.option')?.classList.toggle('is-checked', input.checked),
+  );
 }
 
 function bindGoButtons(root: ParentNode = document): void {
@@ -575,7 +583,6 @@ function screenResult(): string {
         <button type="button" class="btn btn-ghost btn-block" id="resetBtn">Новый опрос</button>
       </div>
       <p class="hint" id="shareMsg" role="status" aria-live="polite"></p>
-      <p class="disclaimer">${esc(DISCLAIMER)}</p>
     </section>`;
 }
 
@@ -662,6 +669,7 @@ const bind: Record<Step, () => void> = {
       const wasAnswered = state.answers[id] !== undefined;
       state.answers[id] = Number(input.value) as Answer;
       card.classList.add('answered');
+      syncChecked(card);
       card.classList.remove('missing');
       saveState();
       updateProgress();

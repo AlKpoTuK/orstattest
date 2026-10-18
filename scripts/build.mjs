@@ -7,7 +7,7 @@ const js = await build({
   entryPoints: ['src/main.ts'],
   bundle: true,
   format: 'iife',
-  target: ['chrome100', 'safari15', 'firefox100'],
+  target: ['chrome90', 'edge90', 'firefox90', 'safari14', 'ios14'],
   minify: true,
   write: false,
   charset: 'utf8',
@@ -17,6 +17,7 @@ const js = await build({
 const css = await build({
   entryPoints: ['src/styles.css'],
   bundle: true,
+  target: ['chrome90', 'edge90', 'firefox90', 'safari14', 'ios14'],
   minify: true,
   write: false,
   charset: 'utf8',

@@ -115,7 +115,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scrollbar-gutter: stable; }
 
 body {
   margin: 0;
@@ -149,7 +149,6 @@ p { margin: 10px 0; }
   padding: calc(10px + env(safe-area-inset-top)) 0 10px;
 }
 .brand { margin: 0; font-weight: 700; font-size: 1.1rem; }
-.brand-sub { margin: 2px 0 0; font-size: 0.85rem; opacity: 0.9; }
 
 
 main { padding-top: 12px; padding-bottom: 32px; }
@@ -261,11 +260,15 @@ input[type="text"], input[type="date"], select {
   border: 1.5px solid var(--line); background: var(--surface); color: var(--text);
   font: inherit;
 }
+input[type="text"], input[type="date"] { -webkit-appearance: none; appearance: none; display: block; line-height: 1.3; }
+input[type="date"] { min-width: 0; text-align: left; }
+input[type="date"]::-webkit-date-and-time-value { text-align: left; margin: 0; }
+input[type="date"]::-webkit-datetime-edit { padding: 0; }
 input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 0; }
 
 .segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1.5px solid var(--accent); border-radius: 999px; overflow: hidden; }
 .segmented label { position: relative; }
-.segmented input { position: absolute; opacity: 0; inset: 0; margin: 0; }
+.segmented input { position: absolute; opacity: 0; top: 0; left: 0; width: 100%; height: 100%; margin: 0; }
 .segmented span {
   display: flex; align-items: center; justify-content: center; text-align: center;
   min-height: var(--tap); padding: 6px 10px; font-weight: 600; font-size: 0.95rem;
@@ -292,7 +295,7 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
   scroll-margin: 90px;
   transition: border-color 0.15s;
 }
-.question.answered { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.question.answered { border-color: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
 .question.missing { border-color: var(--severe); }
 .question legend { padding: 0; float: left; width: 100%; margin-bottom: 10px; }
 .question legend + * { clear: both; }
@@ -312,8 +315,9 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
   accent-color: var(--accent);
 }
 .option span, .a-a { white-space: pre-line; }
-.option:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
-.option:has(input:checked) span { font-weight: 600; }
+.option.is-checked { border-color: var(--accent); background: var(--accent-soft); }
+.option.is-checked span { font-weight: 600; }
+.option:focus-within { outline: 2px solid transparent; }
 .option:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 .time-field { background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--radius); padding: 14px; }
@@ -351,10 +355,10 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
 .clinical .option { margin-top: 10px; background: var(--surface); }
 .level-option span strong { display: block; }
 .level-option span small { display: block; color: var(--muted); font-size: 0.85rem; margin-top: 2px; font-weight: 400; }
-.level-option.level-none:has(input:checked) { border-color: var(--none); background: var(--none-bg); }
-.level-option.level-mild:has(input:checked) { border-color: var(--mild); background: var(--mild-bg); }
-.level-option.level-moderate:has(input:checked) { border-color: var(--moderate); background: var(--moderate-bg); }
-.level-option.level-severe:has(input:checked) { border-color: var(--severe); background: var(--severe-bg); }
+.level-option.level-none.is-checked { border-color: var(--none); background: var(--none-bg); }
+.level-option.level-mild.is-checked { border-color: var(--mild); background: var(--mild-bg); }
+.level-option.level-moderate.is-checked { border-color: var(--moderate); background: var(--moderate-bg); }
+.level-option.level-severe.is-checked { border-color: var(--severe); background: var(--severe-bg); }
 
 .meta { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }
 .meta dt { color: var(--muted); }
@@ -378,7 +382,6 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
 .levels-table thead th.cur-col { color: var(--accent); }
 .levels-table td.hit { background: var(--accent); color: var(--on-accent); font-weight: 800; border-radius: 6px; }
 
-.disclaimer { font-size: 0.88rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; margin-top: 20px; }
 
 
 /* ---------- Главная: тексты и схема глотания ---------- */
@@ -409,7 +412,19 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
 .leg-organ { background: #b0475a; }
 
 .explainer { margin: 12px 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 0 16px; }
-.explainer summary { cursor: pointer; font-weight: 600; color: var(--accent); min-height: var(--tap); display: flex; align-items: center; }
+.explainer summary {
+  cursor: pointer; font-weight: 600; color: var(--accent);
+  min-height: var(--tap); display: flex; align-items: center; gap: 10px;
+  list-style: none; -webkit-tap-highlight-color: transparent;
+}
+.explainer summary::-webkit-details-marker { display: none; }
+.explainer summary::marker { content: ""; }
+.explainer summary::before {
+  content: ""; flex: 0 0 8px; width: 8px; height: 8px; margin-top: -3px;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform 0.2s;
+}
+.explainer[open] summary::before { transform: rotate(45deg); }
 .explainer[open] { padding-bottom: 12px; }
 
 /* элементы схемы */
@@ -449,6 +464,29 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
   .stepper .lbl { font-size: 0.8rem; }
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover { background: var(--accent-strong); }
+  .btn-secondary:hover, .btn-ghost:hover { background: var(--accent-soft); }
+  .role-tile:hover { border-color: var(--accent); }
+  .option:hover { border-color: var(--accent); }
+  .explainer summary:hover { text-decoration: underline; }
+}
+
+@media (max-width: 359px) {
+  :root { --gutter: 12px; }
+  body { font-size: 16px; }
+  h1 { font-size: 1.4rem; }
+  .stepper .lbl { font-size: 0.66rem; }
+  .role-tile { padding: 16px; gap: 12px; min-height: 112px; }
+  .role-icon { flex-basis: 52px; height: 52px; }
+  .role-icon svg { width: 32px; height: 32px; }
+  .result-level { font-size: 1.3rem; }
+}
+
+@media (min-width: 1024px) {
+  .wrap { max-width: 760px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
 }
@@ -458,7 +496,7 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
 @media print {
   :root { --bg: #fff; --surface: #fff; --shadow: none; }
   body { font-size: 12pt; background: #fff; color: #000; }
-  .stepper, .no-print, .sticky-actions, .actions, .clinical, #shareMsg, .app-header .brand-sub { display: none !important; }
+  .stepper, .no-print, .sticky-actions, .actions, .clinical, #shareMsg { display: none !important; }
   .app-header { background: none; color: #000; padding: 0; border-bottom: 2px solid #000; }
   .card { box-shadow: none; break-inside: avoid; }
   .result-card { break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }

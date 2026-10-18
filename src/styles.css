@@ -1,3 +1,15 @@
+/* Golos Text (Paratype, лицензия OFL) — встраивается в страницу при сборке */
+@font-face {
+  font-family: "Golos Text"; font-style: normal; font-display: swap; font-weight: 400 900;
+  src: url("../node_modules/@fontsource-variable/golos-text/files/golos-text-cyrillic-wght-normal.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: "Golos Text"; font-style: normal; font-display: swap; font-weight: 400 900;
+  src: url("../node_modules/@fontsource-variable/golos-text/files/golos-text-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* Опросник OrSAT. Сначала телефон (Galaxy S24 ≈ 360 px), затем шире. */
 
 :root {
@@ -116,7 +128,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 17px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font: 17px/1.55 "Golos Text", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
 }
 
@@ -383,14 +395,6 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
 .level-unknown { background: var(--unknown-bg); border-color: var(--unknown); }
 .level-unknown .result-level { color: var(--unknown); }
 
-.clinical legend { padding: 0; margin-bottom: 4px; }
-.clinical .option { margin-top: 10px; background: var(--surface); }
-.level-option span strong { display: block; }
-.level-option span small { display: block; color: var(--muted); font-size: 0.85rem; margin-top: 2px; font-weight: 400; }
-.level-option.level-none.is-checked { border-color: var(--none); background: var(--none-bg); }
-.level-option.level-mild.is-checked { border-color: var(--mild); background: var(--mild-bg); }
-.level-option.level-moderate.is-checked { border-color: var(--moderate); background: var(--moderate-bg); }
-.level-option.level-severe.is-checked { border-color: var(--severe); background: var(--severe-bg); }
 
 .meta { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }
 .meta dt { color: var(--muted); }
@@ -416,24 +420,50 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
 
 
 
-/* ---------- Главная: тексты и схема глотания ---------- */
+/* ---------- Главная ---------- */
 
-.section-title { margin: 22px 0 6px; }
-.callout-warm { background: var(--warm-bg); border-left-color: var(--warm-line); color: var(--warm-text); }
-.callout-warm .callout-title { margin-bottom: 4px; }
-.callout-warm p:last-child { margin-bottom: 0; }
-.age-list { list-style: none; padding-left: 14px; }
-.age-list li { margin: 3px 0; }
-
-.anatomy {
-  margin: 16px 0; padding: 12px;
-  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-  box-shadow: var(--shadow);
+.home { padding-top: 4px; }
+.hero { padding: 18px 0 26px; border-bottom: 1px solid var(--line); }
+.eyebrow, .kicker {
+  margin: 0 0 8px; font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
 }
+.hero h1 { font-size: 2.4rem; line-height: 1.05; letter-spacing: -0.025em; margin: 0 0 14px; font-weight: 750; }
+.hero .lead { font-size: 1.08rem; line-height: 1.55; color: var(--text); max-width: 34em; margin: 0; }
+.facts { list-style: none; margin: 22px 0; padding: 0; display: flex; flex-wrap: wrap; }
+.facts li { padding: 2px 18px 2px 0; margin-right: 18px; border-right: 1px solid var(--line); color: var(--muted); font-size: 0.92rem; line-height: 1.2; }
+.facts li:last-child { border-right: 0; margin-right: 0; padding-right: 0; }
+.facts b { display: block; font-size: 1.6rem; font-weight: 750; color: var(--text); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.hero-cta { min-width: 220px; }
+
+.why { margin: 28px 0; padding: 2px 0 2px 18px; border-left: 3px solid var(--warm-line); }
+.why .kicker { color: var(--warm-line); }
+.why p:last-child { margin: 0; font-size: 1.02rem; }
+
+.home-section { padding: 26px 0 6px; border-top: 1px solid var(--line); }
+.home-section h2 { font-size: 1.45rem; line-height: 1.2; letter-spacing: -0.015em; margin: 0 0 10px; font-weight: 700; }
+
+.scope { list-style: none; margin: 16px 0 26px; padding: 0; }
+.scope li { display: grid; grid-template-columns: 76px 1fr; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); }
+.scope li:last-child { border-bottom: 1px solid var(--line); }
+.scope-num { font-size: 1.5rem; font-weight: 750; color: var(--accent); letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.scope-body { color: var(--muted); }
+.scope-body strong { display: block; margin-bottom: 2px; color: var(--text); }
+
+.scale-title { margin-top: 4px; }
+.scale { list-style: none; margin: 8px 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 3px solid var(--accent); }
+.scale li { padding: 10px 10px 0 0; position: relative; }
+.scale li::before { content: ""; position: absolute; top: -9px; left: 0; width: 3px; height: 9px; background: var(--accent); }
+.scale-age { display: block; font-size: 1.25rem; font-weight: 750; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.scale-age small { font-size: 0.8rem; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+.scale-meta { display: block; font-size: 0.82rem; color: var(--muted); line-height: 1.35; margin-top: 2px; }
+
+.anatomy { margin: 18px 0 8px; display: grid; gap: 14px; }
+.anatomy-pic { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 10px 12px; }
 .swallow-svg { display: block; width: 100%; max-width: 420px; height: auto; margin: 0 auto; }
-.anatomy figcaption { font-size: 0.85rem; color: var(--muted); text-align: center; margin: 8px 0; }
-.btn-small { min-height: 40px; padding: 6px 16px; font-size: 0.9rem; display: flex; margin: 0 auto 6px; }
-.anatomy-legend { list-style: none; margin: 10px 0 0; padding: 10px 0 0; border-top: 1px dashed var(--line); display: grid; gap: 8px; font-size: 0.92rem; }
+.anatomy figcaption { font-size: 0.85rem; color: var(--muted); margin: 10px 0 0; }
+.btn-small { min-height: 40px; padding: 6px 16px; font-size: 0.9rem; display: flex; margin: 8px auto 0; }
+.anatomy-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 0.94rem; }
 .anatomy-legend li { display: flex; gap: 10px; align-items: flex-start; }
 .leg-num {
   flex: 0 0 24px; height: 24px; border-radius: 50%;
@@ -443,21 +473,41 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
 .leg-nerve { background: #b8892e; }
 .leg-organ { background: #b0475a; }
 
-.explainer { margin: 12px 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 0 16px; }
-.explainer summary {
+.explainer, .spoiler { margin: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.explainer summary, .spoiler summary {
   cursor: pointer; font-weight: 600; color: var(--accent);
-  min-height: var(--tap); display: flex; align-items: center; gap: 10px;
+  min-height: var(--tap); display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 0; line-height: 1.35;
   list-style: none; -webkit-tap-highlight-color: transparent;
 }
-.explainer summary::-webkit-details-marker { display: none; }
-.explainer summary::marker { content: ""; }
-.explainer summary::before {
-  content: ""; flex: 0 0 8px; width: 8px; height: 8px; margin-top: -3px;
+.explainer summary::-webkit-details-marker, .spoiler summary::-webkit-details-marker { display: none; }
+.explainer summary::marker, .spoiler summary::marker { content: ""; }
+.explainer summary::before, .spoiler summary::before {
+  content: ""; flex: 0 0 8px; width: 8px; height: 8px; margin-top: 0.4em;
   border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
   transform: rotate(-45deg); transition: transform 0.2s;
 }
-.explainer[open] summary::before { transform: rotate(45deg); }
-.explainer[open] { padding-bottom: 12px; }
+.explainer[open] summary::before, .spoiler[open] summary::before { transform: rotate(45deg); }
+.explainer[open], .spoiler[open] { padding-bottom: 14px; }
+
+.home-end { margin: 28px 0 8px; }
+
+@media (min-width: 720px) {
+  .hero { padding: 36px 0 34px; }
+  .hero h1 { font-size: 3.4rem; }
+  .hero .lead { font-size: 1.18rem; }
+  .anatomy { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; gap: 24px; }
+  .home-end { max-width: 320px; }
+}
+
+/* ---------- Результат: справочные уровни под спойлером ---------- */
+
+.level-desc { font-size: 1.02rem; }
+.spoiler .hint { margin-top: 0; }
+.other-level { padding: 8px 0 8px 14px; border-left: 3px solid var(--line); margin: 10px 0; background: none; }
+.other-level p { margin: 0; font-size: 0.92rem; color: var(--muted); }
+.other-level .other-title { font-weight: 600; color: var(--text); margin-bottom: 2px; font-size: 0.95rem; }
+.spoiler .table-wrap { margin-top: 14px; }
 
 /* элементы схемы */
 .an-skin { fill: var(--an-skin); stroke: var(--an-skin-line); stroke-width: 1.5; }

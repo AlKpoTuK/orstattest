@@ -17,6 +17,7 @@ const js = await build({
 const css = await build({
   entryPoints: ['src/styles.css'],
   bundle: true,
+  loader: { '.woff2': 'dataurl' },
   target: ['chrome90', 'edge90', 'firefox90', 'safari14', 'ios14'],
   minify: true,
   write: false,

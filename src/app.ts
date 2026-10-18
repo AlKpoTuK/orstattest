@@ -36,7 +36,6 @@ interface State {
   startedAt: number | null;
   minutes: string;
   minutesEdited: boolean;
-  clinicalLevel: LevelId | null;
 }
 
 const STEPS: Step[] = ['info', 'role', 'child', 'questions', 'result'];
@@ -62,7 +61,6 @@ function freshState(): State {
     startedAt: null,
     minutes: '',
     minutesEdited: false,
-    clinicalLevel: null,
   };
 }
 
@@ -249,8 +247,22 @@ function bindGoButtons(root: ParentNode = document): void {
 function screenInfo(): string {
   const { why, scope, swallow } = HOME;
   const whyText = esc(why.text).replace(esc(why.emphasis), `<em>${esc(why.emphasis)}</em>`);
-  const ageList = AGE_GROUPS.map(
-    (g) => `<li><strong>${esc(g.label)}</strong> — ${g.items.length} пунктов, максимум <strong>${g.maxScore} баллов</strong></li>`,
+  const ranges = ['1–4', '5–10', '11–12'];
+  const blocks = scope.blocks
+    .map(
+      (b, i) => `
+      <li>
+        <span class="scope-num">${ranges[i]}</span>
+        <span class="scope-body"><strong>${esc(b.name)}</strong>${esc(b.text.replace(/\s*\(пункты [^)]*\)\.?$/, '.'))}</span>
+      </li>`,
+    )
+    .join('');
+  const scale = AGE_GROUPS.map(
+    (g) => `
+      <li>
+        <span class="scale-age">${esc(g.label.replace(' месяцев', '').replace(' месяца', ''))}<small> мес.</small></span>
+        <span class="scale-meta">${g.items.length} вопросов<br>до ${g.maxScore} баллов</span>
+      </li>`,
   ).join('');
   const legend = swallow.legend
     .map((l) => `<li><span class="leg-num leg-${l.kind}" aria-hidden="true">${l.n}</span><span>${esc(l.text)}</span></li>`)
@@ -258,40 +270,56 @@ function screenInfo(): string {
   const d = swallow.details;
 
   return `
-    <section class="screen">
-      <h1 tabindex="-1">${esc(HOME.title)}</h1>
-      <p class="lead">${esc(HOME.lead)}</p>
+    <section class="screen home">
+      <header class="hero">
+        <p class="eyebrow">Для родителей и специалистов</p>
+        <h1 tabindex="-1">${esc(HOME.title)}</h1>
+        <p class="lead">${esc(HOME.lead)}</p>
+        <ul class="facts" aria-label="Коротко об опроснике">
+          <li><b>12</b> вопросов</li>
+          <li><b>~2</b> минуты</li>
+          <li><b>0–24</b> месяца</li>
+        </ul>
+        <button type="button" class="btn btn-primary hero-cta" data-go="role">Начать опрос</button>
+      </header>
 
-      <div class="callout callout-warm">
-        <p class="callout-title">${esc(why.title)}</p>
+      <aside class="why">
+        <p class="kicker">${esc(why.title)}</p>
         <p>${whyText}</p>
-      </div>
+      </aside>
 
-      <h2 class="section-title">${esc(scope.title)}</h2>
-      <p>${esc(scope.intro)}</p>
-      <ul class="points">${scope.blocks.map((b) => `<li><strong>${esc(b.name)}</strong> — ${esc(b.text)}</li>`).join('')}</ul>
-      <ul class="callout age-list">${ageList}</ul>
+      <section class="home-section">
+        <h2>${esc(scope.title)}</h2>
+        <p>${esc(scope.intro)}</p>
+        <ol class="scope">${blocks}</ol>
+        <p class="kicker scale-title">Сколько вопросов в каждом возрасте</p>
+        <ol class="scale">${scale}</ol>
+      </section>
 
-      <h2 class="section-title">${esc(swallow.title)}</h2>
-      <p>${esc(swallow.text)}</p>
+      <section class="home-section">
+        <h2>${esc(swallow.title)}</h2>
+        <p>${esc(swallow.text)}</p>
+        <figure class="anatomy">
+          <div class="anatomy-pic">
+            ${SWALLOW_SVG}
+            <button type="button" class="btn btn-secondary btn-small" id="animToggle" aria-pressed="false">Остановить анимацию</button>
+          </div>
+          <div class="anatomy-side">
+            <ol class="anatomy-legend">${legend}</ol>
+            <figcaption>${esc(swallow.caption)}</figcaption>
+          </div>
+        </figure>
+        <details class="explainer">
+          <summary>${esc(d.summary)}</summary>
+          <p>${esc(d.intro)}</p>
+          <ul class="points">${d.nerves.map((n) => `<li><strong>${esc(n.name)}</strong> ${esc(n.text)}</li>`).join('')}</ul>
+          <p>${esc(d.other)}</p>
+          <p>${esc(d.sma)}</p>
+        </details>
+      </section>
 
-      <figure class="anatomy">
-        ${SWALLOW_SVG}
-        <figcaption>${esc(swallow.caption)}</figcaption>
-        <button type="button" class="btn btn-secondary btn-small" id="animToggle" aria-pressed="false">Остановить анимацию</button>
-        <ol class="anatomy-legend">${legend}</ol>
-      </figure>
-
-      <details class="explainer">
-        <summary>${esc(d.summary)}</summary>
-        <p>${esc(d.intro)}</p>
-        <ul class="points">${d.nerves.map((n) => `<li><strong>${esc(n.name)}</strong> ${esc(n.text)}</li>`).join('')}</ul>
-        <p>${esc(d.other)}</p>
-        <p>${esc(d.sma)}</p>
-      </details>
-
-      <div class="actions sticky-actions">
-        <button type="button" class="btn btn-primary btn-block" data-go="role">Начать</button>
+      <div class="home-end">
+        <button type="button" class="btn btn-primary btn-block" data-go="role">Начать опрос</button>
       </div>
     </section>`;
 }
@@ -451,8 +479,7 @@ function scrollToCard(el: Element): void {
 interface ResultData {
   group: ReturnType<typeof groupById>;
   score: number;
-  tableLevel: LevelId | null;
-  chosenLevel: LevelId | null;
+  level: LevelId | null;
 }
 
 function resultData(): ResultData | null {
@@ -461,9 +488,7 @@ function resultData(): ResultData | null {
   const group = groupById(groupId);
   if (!isComplete(state.answers, group)) return null;
   const score = totalScore(state.answers, group);
-  const tableLevel = levelFromScore(group, score);
-  const chosenLevel = state.role === 'doctor' ? state.clinicalLevel ?? tableLevel : tableLevel;
-  return { group, score, tableLevel, chosenLevel };
+  return { group, score, level: levelFromScore(group, score) };
 }
 
 function ageText(): string {
@@ -487,40 +512,28 @@ function minutesText(): string {
 function screenResult(): string {
   const r = resultData();
   if (!r) return '';
-  const { group, score, tableLevel, chosenLevel } = r;
+  const { group, score, level } = r;
   const role = state.role ?? 'parent';
-  const shown = chosenLevel ? levelById(chosenLevel) : null;
+  const shown = level ? levelById(level) : null;
 
   const levelCard = shown
     ? `<div class="result-card level-${shown.id}">
-         <p class="result-label">Уровень нарушения${role === 'doctor' && state.clinicalLevel && state.clinicalLevel !== tableLevel ? ' (по оценке специалиста)' : ''}</p>
+         <p class="result-label">Уровень нарушения</p>
          <p class="result-level">${esc(shown.title)}</p>
          <p class="result-score"><strong>${score}</strong> из ${group.maxScore} баллов · группа ${esc(group.label)}</p>
        </div>
-       <p>${esc(shown.description)}</p>`
+       <p class="level-desc">${esc(shown.description)}</p>`
     : `<div class="result-card level-unknown">
          <p class="result-label">Уровень нарушения</p>
          <p class="result-level">Не определяется по таблице</p>
          <p class="result-score"><strong>${score}</strong> из ${group.maxScore} баллов · группа ${esc(group.label)}</p>
        </div>
-       <p>Такая сумма баллов не попадает ни в один уровень таблицы бланка. ${
-         role === 'doctor' ? 'Определите уровень по описаниям ниже.' : 'Обсудите результат с врачом.'
-       }</p>`;
+       <p class="level-desc">Такая сумма баллов не попадает ни в один уровень таблицы бланка. Обсудите результат с врачом.</p>`;
 
-  const doctorLevel =
-    role === 'doctor'
-      ? `<fieldset class="card clinical">
-           <legend><h2>Уровень по клинической картине</h2></legend>
-           <p class="hint">По таблице: ${tableLevel ? esc(levelById(tableLevel).title.toLowerCase()) : 'не определяется'}. Выберите уровень по описаниям, если клиническая картина с ним не совпадает.</p>
-           ${LEVELS.map(
-             (l) => `
-             <label class="option level-option level-${l.id}">
-               <input type="radio" name="clinical" value="${l.id}" ${chosenLevel === l.id ? 'checked' : ''}>
-               <span><strong>${esc(l.title)}</strong><small>${esc(l.description)}</small></span>
-             </label>`,
-           ).join('')}
-         </fieldset>`
-      : '';
+  /* Остальные уровни — только для справки и свёрнуты, чтобы не пугать */
+  const others = LEVELS.filter((l) => l.id !== level)
+    .map((l) => `<div class="other-level"><p class="other-title">${esc(l.title)}</p><p>${esc(l.description)}</p></div>`)
+    .join('');
 
   const table = `
     <div class="table-wrap">
@@ -530,14 +543,22 @@ function screenResult(): string {
           (g) => `<th scope="col" class="${g.id === group.id ? 'cur-col' : ''}">${esc(g.label.replace(' месяцев', ' мес').replace(' месяца', ' мес'))}</th>`,
         ).join('')}</tr></thead>
         <tbody>${LEVELS.map(
-          (l) => `<tr class="${l.id === tableLevel ? 'cur-row' : ''}"><th scope="row">${esc(l.title)}</th>${AGE_GROUPS.map((g) => {
+          (l) => `<tr><th scope="row">${esc(l.title)}</th>${AGE_GROUPS.map((g) => {
             const [from, to] = LEVEL_RANGES[g.id][l.id];
-            const hit = g.id === group.id && l.id === tableLevel;
+            const hit = g.id === group.id && l.id === level;
             return `<td class="${g.id === group.id ? 'cur-col' : ''} ${hit ? 'hit' : ''}">${from === to ? from : `${from}–${to}`}</td>`;
           }).join('')}</tr>`,
         ).join('')}</tbody>
       </table>
     </div>`;
+
+  const reference = `
+    <details class="spoiler no-print">
+      <summary>Другие уровни нарушения и таблица баллов</summary>
+      <p class="hint">Справочно: описания уровней, которые не соответствуют сумме баллов вашего ребёнка.</p>
+      ${others}
+      ${table}
+    </details>`;
 
   const answersList = itemsForGroup(group)
     .map((item, i) => {
@@ -553,7 +574,6 @@ function screenResult(): string {
       <h1 tabindex="-1">Результат</h1>
       ${levelCard}
       <p class="callout">${esc(ROLE_TEXT[role].resultNote)}</p>
-      ${doctorLevel}
 
       <div class="card">
         <h2>Сведения</h2>
@@ -572,10 +592,7 @@ function screenResult(): string {
         <p class="total">Сумма баллов: <b>${score}</b> из ${group.maxScore}</p>
       </div>
 
-      <div class="card">
-        <h2>Справочная таблица</h2>
-        ${table}
-      </div>
+      ${reference}
 
       <div class="actions result-actions no-print">
         <button type="button" class="btn btn-primary btn-block" id="printBtn">Сохранить PDF или распечатать</button>
@@ -597,7 +614,7 @@ function shareText(): string {
     `Дата оценки: ${assessedDateText()}`,
     `Заполнил: ${filledByText()}`,
     `Сумма баллов: ${r.score} из ${r.group.maxScore}`,
-    `Уровень нарушения: ${r.chosenLevel ? levelById(r.chosenLevel).title : 'не определяется по таблице'}`,
+    `Уровень нарушения: ${r.level ? levelById(r.level).title : 'не определяется по таблице'}`,
     '',
     'Ответы:',
     ...itemsForGroup(r.group).map((item, i) => {
@@ -621,7 +638,6 @@ const bind: Record<Step, () => void> = {
     document.querySelectorAll<HTMLButtonElement>('[data-role]').forEach((btn) =>
       btn.addEventListener('click', () => {
         const role = btn.dataset.role as Role;
-        if (state.role !== role) state.clinicalLevel = null;
         state.role = role;
         go('child');
       }),
@@ -709,14 +725,6 @@ const bind: Record<Step, () => void> = {
 
   result() {
     bindGoButtons();
-    document.querySelectorAll<HTMLInputElement>('input[name="clinical"]').forEach((r) =>
-      r.addEventListener('change', () => {
-        state.clinicalLevel = r.value as LevelId;
-        saveState();
-        render();
-        document.querySelector('.clinical')?.scrollIntoView({ block: 'start' });
-      }),
-    );
     $('#printBtn').addEventListener('click', () => window.print());
     $('#shareBtn').addEventListener('click', async () => {
       const text = shareText();

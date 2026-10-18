@@ -1,5 +1,5 @@
-import { AGE_GROUPS, ATTRIBUTION, LEVELS, LEVEL_RANGES, type AgeGroupId, type ItemId, type LevelId } from './content';
-import { INFO, ROLE_TEXT, SPECIALTIES } from './info';
+import { AGE_GROUPS, LEVELS, LEVEL_RANGES, type AgeGroupId, type ItemId, type LevelId } from './content';
+import { DISCLAIMER, HOME, ROLE_TEXT } from './info';
 import {
   answeredCount,
   checkAgeMonths,
@@ -31,7 +31,6 @@ interface State {
   birth: string;
   assessed: string;
   monthsInput: string;
-  specialty: string;
   answers: Answers;
   startedAt: number | null;
   minutes: string;
@@ -41,7 +40,7 @@ interface State {
 
 const STEPS: Step[] = ['info', 'role', 'child', 'questions', 'result'];
 const STEP_TITLES: Record<Step, string> = {
-  info: 'О тесте',
+  info: 'Главная',
   role: 'Кто заполняет',
   child: 'Данные ребёнка',
   questions: 'Вопросы',
@@ -58,7 +57,6 @@ function freshState(): State {
     birth: '',
     assessed: todayIso(),
     monthsInput: '',
-    specialty: '',
     answers: {},
     startedAt: null,
     minutes: '',
@@ -220,7 +218,7 @@ function render(): void {
   };
   main.innerHTML = renderStepper() + screens[state.step]();
   bind[state.step]();
-  document.title = `${STEP_TITLES[state.step]} — OrSAT`;
+  document.title = `${STEP_TITLES[state.step]} — тестовая версия опросника`;
   window.scrollTo({ top: 0, behavior: 'auto' });
   const h1 = main.querySelector<HTMLElement>('h1');
   h1?.focus({ preventScroll: true });
@@ -239,56 +237,12 @@ function bindGoButtons(root: ParentNode = document): void {
 /* ---------- Экран 0: информация ---------- */
 
 function screenInfo(): string {
-  const phases = INFO.swallow.phases
-    .map(
-      (p, i) => `
-      <li class="phase">
-        <span class="phase-num" aria-hidden="true">${i + 1}</span>
-        <div class="phase-body">
-          <h4>${esc(p.name)}</h4>
-          <p class="phase-control">${esc(p.control)}</p>
-          <p>${esc(p.text)}</p>
-        </div>
-      </li>`,
-    )
-    .join('');
-
   return `
     <section class="screen">
-      <h1 tabindex="-1">Опросник OrSAT</h1>
-      <p class="lead">${esc(INFO.lead)}</p>
-      <button type="button" class="btn btn-primary btn-block" data-go="role">Перейти к опроснику</button>
-
-      <details class="card" open>
-        <summary><h2>${esc(INFO.why.title)}</h2></summary>
-        ${INFO.why.paragraphs.map((p) => `<p>${esc(p)}</p>`).join('')}
-        <ul class="points">${INFO.why.points.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>
-        <p class="callout">${esc(INFO.why.note)}</p>
-      </details>
-
-      <details class="card">
-        <summary><h2>${esc(INFO.sma.title)}</h2></summary>
-        ${INFO.sma.paragraphs.map((p) => `<p>${esc(p)}</p>`).join('')}
-      </details>
-
-      <details class="card">
-        <summary><h2>${esc(INFO.swallow.title)}</h2></summary>
-        <p>${esc(INFO.swallow.intro)}</p>
-        <figure class="phases-figure">
-          <ol class="phases">${phases}</ol>
-          <figcaption>Четыре фазы глотания: от рта до желудка. Самая быстрая и опасная — глоточная: в этот момент дыхательные пути должны надёжно закрыться.</figcaption>
-        </figure>
-        <p>${esc(INFO.swallow.nerves)}</p>
-      </details>
-
-      <details class="card">
-        <summary><h2>${esc(INFO.smaSwallow.title)}</h2></summary>
-        ${INFO.smaSwallow.paragraphs.map((p) => `<p>${esc(p)}</p>`).join('')}
-        <h3>${esc(INFO.smaSwallow.signsTitle)}</h3>
-        <ul class="points">${INFO.smaSwallow.signs.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
-      </details>
-
-      <div class="actions sticky-actions">
+      <h1 tabindex="-1">${esc(HOME.title)}</h1>
+      <p class="lead">${esc(HOME.lead)}</p>
+      <p class="callout">${esc(HOME.pending)}</p>
+      <div class="actions">
         <button type="button" class="btn btn-primary btn-block" data-go="role">Начать</button>
       </div>
     </section>`;
@@ -317,7 +271,6 @@ function screenRole(): string {
 
 function screenChild(): string {
   const msg = ageMessage(ageCheck());
-  const doctor = state.role === 'doctor';
   return `
     <section class="screen">
       <h1 tabindex="-1">Данные ребёнка</h1>
@@ -356,17 +309,6 @@ function screenChild(): string {
 
       <p id="ageMsg" class="age-msg ${msg?.error ? 'error' : ''}" role="status" aria-live="polite">${msg ? esc(msg.text) : ''}</p>
 
-      ${
-        doctor
-          ? `<div class="field">
-              <label for="specialty">Ваша специальность <span class="opt">(необязательно)</span></label>
-              <select id="specialty">
-                <option value="">Не указывать</option>
-                ${SPECIALTIES.map((s) => `<option ${state.specialty === s ? 'selected' : ''}>${esc(s)}</option>`).join('')}
-              </select>
-            </div>`
-          : ''
-      }
 
       <div class="actions sticky-actions">
         ${backButton('role')}
@@ -396,8 +338,6 @@ function screenQuestions(): string {
   if (!groupId) return '';
   const group = groupById(groupId);
   const items = itemsForGroup(group);
-  const role = state.role ?? 'parent';
-
   const cards = items
     .map((item, i) => {
       const a = state.answers[item.id];
@@ -421,10 +361,7 @@ function screenQuestions(): string {
   return `
     <section class="screen">
       <h1 tabindex="-1">Вопросы</h1>
-      <div class="callout">
-        <p class="callout-title">Группа ${esc(group.label)}: ${items.length} вопросов</p>
-        <ul>${ROLE_TEXT[role].instruction.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
-      </div>
+      <p class="callout callout-title">Группа ${esc(group.label)}: ${items.length} вопросов</p>
       <form id="questions" novalidate>
         ${cards}
         <div class="field time-field">
@@ -491,8 +428,7 @@ function assessedDateText(): string {
 }
 
 function filledByText(): string {
-  if (state.role === 'doctor') return state.specialty ? `Врач (${state.specialty})` : 'Врач';
-  return 'Родитель / законный представитель';
+  return ROLE_TEXT[state.role ?? 'parent'].filledBy;
 }
 
 function minutesText(): string {
@@ -509,7 +445,7 @@ function screenResult(): string {
 
   const levelCard = shown
     ? `<div class="result-card level-${shown.id}">
-         <p class="result-label">Уровень нарушения${role === 'doctor' && state.clinicalLevel && state.clinicalLevel !== tableLevel ? ' (по оценке врача)' : ''}</p>
+         <p class="result-label">Уровень нарушения${role === 'doctor' && state.clinicalLevel && state.clinicalLevel !== tableLevel ? ' (по оценке специалиста)' : ''}</p>
          <p class="result-level">${esc(shown.title)}</p>
          <p class="result-score"><strong>${score}</strong> из ${group.maxScore} баллов · группа ${esc(group.label)}</p>
        </div>
@@ -600,14 +536,14 @@ function screenResult(): string {
         <button type="button" class="btn btn-ghost btn-block" id="resetBtn">Новый опрос</button>
       </div>
       <p class="hint" id="shareMsg" role="status" aria-live="polite"></p>
-      <p class="disclaimer">${esc(INFO.why.note)}</p>
+      <p class="disclaimer">${esc(DISCLAIMER)}</p>
     </section>`;
 }
 
 function shareText(): string {
   const r = resultData();
   if (!r) return '';
-  const lines = ['Опросник OrSAT — результат'];
+  const lines = ['Опросник оральных навыков и глотания (тестовая версия) — результат'];
   if (state.childName.trim()) lines.push(`Ребёнок: ${state.childName.trim()}`);
   lines.push(
     `Возраст: ${ageText()}, группа ${r.group.label}`,
@@ -670,11 +606,6 @@ const bind: Record<Step, () => void> = {
     bindInput('#birth', 'birth');
     bindInput('#assessed', 'assessed');
     bindInput('#months', 'monthsInput');
-    const specialty = document.querySelector<HTMLSelectElement>('#specialty');
-    specialty?.addEventListener('change', () => {
-      state.specialty = specialty.value;
-      saveState();
-    });
     $('#toQuestions').addEventListener('click', () => go('questions'));
   },
 
@@ -743,7 +674,7 @@ const bind: Record<Step, () => void> = {
       const msg = $('#shareMsg');
       try {
         if (typeof navigator.share === 'function') {
-          await navigator.share({ title: 'Результат OrSAT', text });
+          await navigator.share({ title: 'Результат опросника', text });
         } else {
           await navigator.clipboard.writeText(text);
           msg.textContent = 'Результат скопирован — его можно вставить в сообщение врачу.';
@@ -764,7 +695,6 @@ const bind: Record<Step, () => void> = {
 /* ---------- Запуск ---------- */
 
 export function start(): void {
-  $('#attribution').innerHTML = `${esc(ATTRIBUTION.original)}<br>${esc(ATTRIBUTION.adaptation)}`;
   const fromHash = location.hash.slice(1) as Step;
   const initial = STEPS.includes(fromHash) ? fromHash : state.step;
   const target = allowed(initial) ? initial : furthestAllowed();

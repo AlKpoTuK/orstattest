@@ -105,22 +105,9 @@ p { margin: 10px 0; }
   color: var(--header-text);
   padding: calc(10px + env(safe-area-inset-top)) 0 10px;
 }
-.brand { margin: 0; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
-.brand-mark {
-  display: inline-grid; place-items: center;
-  width: 28px; height: 28px; border-radius: 8px;
-  background: var(--header-text); color: var(--header-bg);
-  font-size: 0.8rem; font-weight: 800;
-}
+.brand { margin: 0; font-weight: 700; font-size: 1.1rem; }
 .brand-sub { margin: 2px 0 0; font-size: 0.85rem; opacity: 0.9; }
 
-.draft-banner {
-  background: var(--warn-bg);
-  color: var(--warn-text);
-  font-size: 0.85rem;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--line);
-}
 
 main { padding-top: 12px; padding-bottom: 32px; }
 
@@ -159,24 +146,6 @@ main { padding-top: 12px; padding-bottom: 32px; }
 }
 .card > h2 { margin-bottom: 8px; }
 
-details.card { padding: 0; }
-details.card > summary {
-  list-style: none; cursor: pointer;
-  min-height: var(--tap);
-  padding: 14px 44px 14px 16px;
-  position: relative;
-}
-details.card > summary::-webkit-details-marker { display: none; }
-details.card > summary::after {
-  content: ""; position: absolute; right: 18px; top: 50%;
-  width: 10px; height: 10px; margin-top: -7px;
-  border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
-  transform: rotate(45deg); transition: transform 0.2s;
-}
-details.card[open] > summary::after { transform: rotate(-135deg); margin-top: -2px; }
-details.card > :not(summary) { margin-left: 16px; margin-right: 16px; }
-details.card > :last-child { margin-bottom: 16px; }
-
 .points { padding-left: 20px; margin: 8px 0; }
 .points li { margin: 6px 0; }
 
@@ -190,26 +159,6 @@ details.card > :last-child { margin-bottom: 16px; }
 .callout ul { margin: 6px 0 0; padding-left: 20px; }
 .callout li { margin: 4px 0; }
 .callout-title { margin: 0; font-weight: 600; }
-
-/* ---------- Фазы глотания ---------- */
-
-.phases-figure { margin: 12px 0; }
-.phases { list-style: none; margin: 0; padding: 0; position: relative; }
-.phase { display: grid; grid-template-columns: 36px 1fr; gap: 12px; position: relative; padding-bottom: 14px; }
-.phase:not(:last-child)::before {
-  content: ""; position: absolute; left: 17px; top: 36px; bottom: 0;
-  width: 2px; background: var(--line);
-}
-.phase-num {
-  width: 36px; height: 36px; border-radius: 50%;
-  display: grid; place-items: center; font-weight: 700;
-  background: var(--accent-soft); color: var(--accent); border: 2px solid var(--accent);
-  position: relative; z-index: 1;
-}
-.phase:nth-child(3) .phase-num { background: var(--accent); color: var(--on-accent); }
-.phase-body p { margin: 4px 0 0; font-size: 0.95rem; }
-.phase-body .phase-control { color: var(--muted); font-size: 0.82rem; margin-top: 0; }
-.phases-figure figcaption { font-size: 0.85rem; color: var(--muted); }
 
 /* ---------- Кнопки ---------- */
 
@@ -319,6 +268,7 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
   flex: 0 0 22px; width: 22px; height: 22px; margin: 1px 0 0;
   accent-color: var(--accent);
 }
+.option span, .a-a { white-space: pre-line; }
 .option:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
 .option:has(input:checked) span { font-weight: 600; }
 .option:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
@@ -387,11 +337,6 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
 
 .disclaimer { font-size: 0.88rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; margin-top: 20px; }
 
-/* ---------- Подвал ---------- */
-
-.app-footer { border-top: 1px solid var(--line); padding: 16px 0 calc(16px + env(safe-area-inset-bottom)); }
-.app-footer p { margin: 0; font-size: 0.78rem; color: var(--muted); }
-
 /* ---------- Шире телефона ---------- */
 
 @media (min-width: 600px) {
@@ -415,8 +360,6 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
   body { font-size: 12pt; background: #fff; color: #000; }
   .stepper, .no-print, .sticky-actions, .actions, .clinical, #shareMsg, .app-header .brand-sub { display: none !important; }
   .app-header { background: none; color: #000; padding: 0; border-bottom: 2px solid #000; }
-  .brand-mark { border: 1px solid #000; }
-  .draft-banner { background: none; border: 1px solid #999; }
   .card { box-shadow: none; break-inside: avoid; }
   .result-card { break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .levels-table td.hit, .levels-table .cur-col { -webkit-print-color-adjust: exact; print-color-adjust: exact; }

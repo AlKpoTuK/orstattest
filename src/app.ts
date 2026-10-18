@@ -1,5 +1,6 @@
 import { AGE_GROUPS, LEVELS, LEVEL_RANGES, type AgeGroupId, type ItemId, type LevelId } from './content';
 import { DISCLAIMER, HOME, ROLE_TEXT } from './info';
+import { SWALLOW_SVG, initSwallowAnimation } from './swallow-anim';
 import {
   answeredCount,
   checkAgeMonths,
@@ -237,12 +238,50 @@ function bindGoButtons(root: ParentNode = document): void {
 /* ---------- Экран 0: информация ---------- */
 
 function screenInfo(): string {
+  const { why, scope, swallow } = HOME;
+  const whyText = esc(why.text).replace(esc(why.emphasis), `<em>${esc(why.emphasis)}</em>`);
+  const ageList = AGE_GROUPS.map(
+    (g) => `<li><strong>${esc(g.label)}</strong> — ${g.items.length} пунктов, максимум <strong>${g.maxScore} баллов</strong></li>`,
+  ).join('');
+  const legend = swallow.legend
+    .map((l) => `<li><span class="leg-num leg-${l.kind}" aria-hidden="true">${l.n}</span><span>${esc(l.text)}</span></li>`)
+    .join('');
+  const d = swallow.details;
+
   return `
     <section class="screen">
       <h1 tabindex="-1">${esc(HOME.title)}</h1>
       <p class="lead">${esc(HOME.lead)}</p>
-      <p class="callout">${esc(HOME.pending)}</p>
-      <div class="actions">
+
+      <div class="callout callout-warm">
+        <p class="callout-title">${esc(why.title)}</p>
+        <p>${whyText}</p>
+      </div>
+
+      <h2 class="section-title">${esc(scope.title)}</h2>
+      <p>${esc(scope.intro)}</p>
+      <ul class="points">${scope.blocks.map((b) => `<li><strong>${esc(b.name)}</strong> — ${esc(b.text)}</li>`).join('')}</ul>
+      <ul class="callout age-list">${ageList}</ul>
+
+      <h2 class="section-title">${esc(swallow.title)}</h2>
+      <p>${esc(swallow.text)}</p>
+
+      <figure class="anatomy">
+        ${SWALLOW_SVG}
+        <figcaption>${esc(swallow.caption)}</figcaption>
+        <button type="button" class="btn btn-secondary btn-small" id="animToggle" aria-pressed="false">Остановить анимацию</button>
+        <ol class="anatomy-legend">${legend}</ol>
+      </figure>
+
+      <details class="explainer">
+        <summary>${esc(d.summary)}</summary>
+        <p>${esc(d.intro)}</p>
+        <ul class="points">${d.nerves.map((n) => `<li><strong>${esc(n.name)}</strong> ${esc(n.text)}</li>`).join('')}</ul>
+        <p>${esc(d.other)}</p>
+        <p>${esc(d.sma)}</p>
+      </details>
+
+      <div class="actions sticky-actions">
         <button type="button" class="btn btn-primary btn-block" data-go="role">Начать</button>
       </div>
     </section>`;
@@ -566,6 +605,7 @@ function shareText(): string {
 const bind: Record<Step, () => void> = {
   info() {
     bindGoButtons();
+    initSwallowAnimation($('#app'));
   },
 
   role() {

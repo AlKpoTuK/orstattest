@@ -28,6 +28,21 @@
   --tap: 48px;
   --gutter: 16px;
   --shadow: 0 1px 2px rgba(20, 24, 28, 0.06), 0 2px 8px rgba(20, 24, 28, 0.05);
+
+  /* схема глотания */
+  --an-skin: #f4dcc8; --an-skin-line: #c99a7a;
+  --an-brain: #efe3ee; --an-brain-line: #c9b0c6;
+  --an-stem: #d9b8d4;
+  --an-bone: #ece6d8; --an-bone-line: #c7bda6;
+  --an-air: #fbf6f0; --an-airway: #dbe9f1; --an-airway-line: #8fb3c8;
+  --an-eso: #f2c9b8; --an-eso-line: #c98a74;
+  --an-tongue: #e59a9a; --an-tongue-line: #b96868;
+  --an-palate: #9c6b58;
+  --an-epi: #b0475a;
+  --an-nerve: #e2c27a; --an-pulse: #f5a700;
+  --an-bolus: #f0b840; --an-bolus-line: #a87612;
+  --an-text: #3d3328;
+  --warm-bg: #fff6e8; --warm-line: #d18b1a; --warm-text: #4a3a1c;
   color-scheme: light;
 }
 
@@ -54,6 +69,20 @@
     --moderate: #f29b62; --moderate-bg: #402818;
     --severe: #f08a82; --severe-bg: #42201e;
     --unknown: #b5bec7; --unknown-bg: #2b3138;
+
+    --an-skin: #3a2e28; --an-skin-line: #7a5c4c;
+    --an-brain: #3a3140; --an-brain-line: #6e5d74;
+    --an-stem: #6a5170;
+    --an-bone: #3a372f; --an-bone-line: #6b6556;
+    --an-air: #1f2328; --an-airway: #22394a; --an-airway-line: #5d8aa6;
+    --an-eso: #5a3a30; --an-eso-line: #9a6a58;
+    --an-tongue: #8a4a4c; --an-tongue-line: #b87072;
+    --an-palate: #c9a08c;
+    --an-epi: #e07a8c;
+    --an-nerve: #8a7440; --an-pulse: #ffc44a;
+    --an-bolus: #f0b840; --an-bolus-line: #ffd27a;
+    --an-text: #e8e0d6;
+    --warm-bg: #3a3017; --warm-line: #e7a33a; --warm-text: #f3e2bd;
     --shadow: none;
     color-scheme: dark;
   }
@@ -67,6 +96,20 @@
   --none: #6fcf9d; --none-bg: #1b3328; --mild: #e7c15a; --mild-bg: #3a3118;
   --moderate: #f29b62; --moderate-bg: #402818; --severe: #f08a82; --severe-bg: #42201e;
   --unknown: #b5bec7; --unknown-bg: #2b3138; --shadow: none;
+
+  --an-skin: #3a2e28; --an-skin-line: #7a5c4c;
+  --an-brain: #3a3140; --an-brain-line: #6e5d74;
+  --an-stem: #6a5170;
+  --an-bone: #3a372f; --an-bone-line: #6b6556;
+  --an-air: #1f2328; --an-airway: #22394a; --an-airway-line: #5d8aa6;
+  --an-eso: #5a3a30; --an-eso-line: #9a6a58;
+  --an-tongue: #8a4a4c; --an-tongue-line: #b87072;
+  --an-palate: #c9a08c;
+  --an-epi: #e07a8c;
+  --an-nerve: #8a7440; --an-pulse: #ffc44a;
+  --an-bolus: #f0b840; --an-bolus-line: #ffd27a;
+  --an-text: #e8e0d6;
+  --warm-bg: #3a3017; --warm-line: #e7a33a; --warm-text: #f3e2bd;
   color-scheme: dark;
 }
 
@@ -336,6 +379,63 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus { border-color:
 .levels-table td.hit { background: var(--accent); color: var(--on-accent); font-weight: 800; border-radius: 6px; }
 
 .disclaimer { font-size: 0.88rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; margin-top: 20px; }
+
+
+/* ---------- Главная: тексты и схема глотания ---------- */
+
+.section-title { margin: 22px 0 6px; }
+.callout-warm { background: var(--warm-bg); border-left-color: var(--warm-line); color: var(--warm-text); }
+.callout-warm .callout-title { margin-bottom: 4px; }
+.callout-warm p:last-child { margin-bottom: 0; }
+.age-list { list-style: none; padding-left: 14px; }
+.age-list li { margin: 3px 0; }
+
+.anatomy {
+  margin: 16px 0; padding: 12px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.swallow-svg { display: block; width: 100%; max-width: 420px; height: auto; margin: 0 auto; }
+.anatomy figcaption { font-size: 0.85rem; color: var(--muted); text-align: center; margin: 8px 0; }
+.btn-small { min-height: 40px; padding: 6px 16px; font-size: 0.9rem; display: flex; margin: 0 auto 6px; }
+.anatomy-legend { list-style: none; margin: 10px 0 0; padding: 10px 0 0; border-top: 1px dashed var(--line); display: grid; gap: 8px; font-size: 0.92rem; }
+.anatomy-legend li { display: flex; gap: 10px; align-items: flex-start; }
+.leg-num {
+  flex: 0 0 24px; height: 24px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 0.78rem; font-weight: 700; color: #fff;
+}
+.leg-center { background: #8a6848; }
+.leg-nerve { background: #b8892e; }
+.leg-organ { background: #b0475a; }
+
+.explainer { margin: 12px 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 0 16px; }
+.explainer summary { cursor: pointer; font-weight: 600; color: var(--accent); min-height: var(--tap); display: flex; align-items: center; }
+.explainer[open] { padding-bottom: 12px; }
+
+/* элементы схемы */
+.an-skin { fill: var(--an-skin); stroke: var(--an-skin-line); stroke-width: 1.5; }
+.an-brain { fill: var(--an-brain); stroke: var(--an-brain-line); stroke-width: 1; }
+.an-stem { fill: none; stroke: var(--an-stem); stroke-width: 14; stroke-linecap: round; }
+.an-bone rect { fill: var(--an-bone); stroke: var(--an-bone-line); stroke-width: 1; }
+.an-air { fill: var(--an-air); }
+.an-airway { fill: var(--an-airway); stroke: var(--an-airway-line); stroke-width: 1.2; }
+.an-eso { fill: var(--an-eso); stroke: var(--an-eso-line); stroke-width: 1.2; }
+.an-folds line { stroke: var(--an-epi); stroke-width: 2.5; stroke-linecap: round; }
+.an-palate { fill: none; stroke: var(--an-palate); stroke-width: 4; stroke-linecap: round; }
+.an-soft { fill: none; stroke: var(--an-palate); stroke-width: 5; stroke-linecap: round; }
+.an-tongue { fill: var(--an-tongue); stroke: var(--an-tongue-line); stroke-width: 1.2; }
+.an-epi { fill: none; stroke: var(--an-epi); stroke-width: 4; stroke-linecap: round; }
+.an-nerve { fill: none; stroke: var(--an-nerve); stroke-width: 1.6; stroke-dasharray: 3 3; }
+.an-pulse { fill: none; stroke: var(--an-pulse); stroke-width: 3.2; stroke-linecap: round; }
+.an-nucleus { fill: var(--an-pulse); }
+.an-bolus { fill: var(--an-bolus); stroke: var(--an-bolus-line); stroke-width: 1; }
+.an-leader { stroke: var(--an-text); stroke-width: 0.8; opacity: 0.55; }
+.an-marker circle { stroke: none; }
+.an-marker-center circle { fill: #8a6848; }
+.an-marker-nerve circle { fill: #b8892e; }
+.an-marker-organ circle { fill: #b0475a; }
+.an-marker text { fill: #fff; font-size: 12px; font-weight: 700; font-family: inherit; }
+.an-phase { fill: var(--an-text); font-size: 16.5px; font-weight: 600; font-family: inherit; }
 
 /* ---------- Шире телефона ---------- */
 
